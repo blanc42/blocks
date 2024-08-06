@@ -3,8 +3,12 @@
     import AddTask from "$lib/components/addTask.svelte";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
     import * as Avatar from "$lib/components/ui/avatar";
-    import { PlusIcon } from "lucide-svelte";
     import { goto } from "$app/navigation";
+    import Sun from "lucide-svelte/icons/sun";
+  import Moon from "lucide-svelte/icons/moon";
+ 
+    import { toggleMode } from "mode-watcher";
+    import { ModeWatcher } from "mode-watcher";
 </script>
 
 <nav class="bg-background border-b">
@@ -17,6 +21,15 @@
 
             </div>
             <div class="flex items-center gap-2">
+                <Button on:click={toggleMode} variant="outline" size="icon">
+                    <Sun
+                      class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
+                    />
+                    <Moon
+                      class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
+                    />
+                    <span class="sr-only">Toggle theme</span>
+                  </Button>
                 <AddTask />
                 <DropdownMenu.Root>
                     <DropdownMenu.Trigger>
