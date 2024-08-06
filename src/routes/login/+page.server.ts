@@ -13,7 +13,7 @@ export const actions: Actions = {
         if (user) {
             const token = createJWT(user.id);
             setAuthCookie(cookies, token);
-            throw redirect(303, '/dashboard');
+            throw redirect(303, '/');
         } else {
             return fail(400, { email, incorrect: true });
         }

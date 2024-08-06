@@ -5,9 +5,9 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
   const user = await authenticateUser(event.request);
   event.locals = { ...event.locals, user };
 
-  console.log(user)
-
-  console.log("this middleware is running")
+  if (!user && !event.url.pathname.startsWith("/login") && !event.url.pathname.startsWith("/signup")) {
+    return Response.redirect(new URL("/login", event.url));
+  }
   
   return resolve(event);
 };
