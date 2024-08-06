@@ -1,27 +1,59 @@
-
 <script lang="ts">
     import { Button } from "$lib/components/ui/button";
     import AddTask from "$lib/components/addTask.svelte";
+    import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+    import * as Avatar from "$lib/components/ui/avatar";
+    import { PlusIcon } from "lucide-svelte";
+    import { goto } from "$app/navigation";
 </script>
 
 <nav class="bg-background border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <div class="flex-shrink-0 flex items-center">
-                    <a href="/dashboard" class="text-xl font-bold">TaskMaster</a>
+                    <a href="/" class="text-xl font-bold">TaskMaster</a>
                 </div>
-                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    <a href="/dashboard" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                        Dashboard
-                    </a>
-                    <a href="/profile" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                        Profile
-                    </a>
-                </div>
+
             </div>
             <div class="flex items-center">
                 <AddTask />
+                <div class="sm:hidden">
+                    <Button class="mr-2">
+                        <span class="material-icons">
+                            <PlusIcon class="w-4 h-4 md:hidden" />
+                            <p class="hidden md:block">Add Task</p>
+                        </span> <!-- Assuming you have a way to include icons -->
+                    </Button>
+                </div>
+                <DropdownMenu.Root>
+                    <DropdownMenu.Trigger>
+                        <Avatar.Root>
+                            <Avatar.Image src="https://github.com/shadcn.png" alt="@shadcn" />
+                            <Avatar.Fallback>CN</Avatar.Fallback>
+                        </Avatar.Root>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content class="w-48">
+                        <DropdownMenu.Group>
+                            <DropdownMenu.Item on:click={() => goto("/profile")}>
+                                Profile
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item on:click={() => goto("/login")}>
+                                Login
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item on:click={() => goto("/signup")}>
+                                Signup
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Separator />
+                            <DropdownMenu.Item on:click={() => {
+                                console.log("logout");
+                                // Add actual logout logic here
+                            }}>
+                                Logout
+                            </DropdownMenu.Item>
+                        </DropdownMenu.Group>
+                    </DropdownMenu.Content>
+                </DropdownMenu.Root>
             </div>
         </div>
     </div>

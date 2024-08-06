@@ -55,7 +55,7 @@ $: if (typeof window !== 'undefined') {
             <DrawerDescription>Create a new task here</DrawerDescription>
         </DrawerHeader>
         <div class="p-4">
-            <form method="POST" action="/dashboard?/addTask" use:enhance={addTask} class="space-y-4">
+            <form method="POST" action="/?/addTask" use:enhance={addTask} class="space-y-4">
                 <div class="space-y-2">
                     <Label for="title">Title</Label>
                     <Input id="title" name="title" bind:value={newTask.title} required />
@@ -91,7 +91,7 @@ $: if (typeof window !== 'undefined') {
             <DialogTitle>Add Task</DialogTitle>
             <DialogDescription>Create a new task here</DialogDescription>
         </DialogHeader>
-        <form method="POST" action="/dashboard?/addTask" use:enhance={addTask} class="space-y-4">
+        <form method="POST" action="/?/addTask" use:enhance={addTask} class="space-y-4">
             <div class="space-y-2">
                 <Label for="title">Title</Label>
                 <Input id="title" name="title" bind:value={newTask.title} required />
