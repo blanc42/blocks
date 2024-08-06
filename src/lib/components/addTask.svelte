@@ -7,6 +7,7 @@
     import { enhance } from '$app/forms';
     import type { SubmitFunction } from "@sveltejs/kit";
     import { showDialog, showDrawer, tasks } from "$lib/stores/Store";
+    import { PlusIcon, PlusSquare } from "lucide-svelte";
 
 
     let newTask = {
@@ -47,11 +48,16 @@ $: if (typeof window !== 'undefined') {
 {#if isMobile}
 <Drawer open={$showDrawer} onOpenChange={(open) => $showDrawer = open}>
     <DrawerTrigger asChild>
-        <Button on:click={()=> $showDrawer = true}>Add Task</Button>
+        <Button on:click={()=> $showDrawer = true}>
+            <PlusIcon class="w-4 h-4 md:hidden" />
+            <p class="hidden md:block">Add Task</p>
+        </Button>
     </DrawerTrigger>
     <DrawerContent>
         <DrawerHeader>
-            <DrawerTitle>Add Task</DrawerTitle>
+            <DrawerTitle>
+                Add Task
+            </DrawerTitle>
             <DrawerDescription>Create a new task here</DrawerDescription>
         </DrawerHeader>
         <div class="p-4">
@@ -84,7 +90,10 @@ $: if (typeof window !== 'undefined') {
 {:else}
 <Dialog open={$showDialog} onOpenChange={(open) => $showDialog = open}>
     <DialogTrigger asChild>
-        <Button on:click={()=> $showDialog = true}>Add Task</Button>
+        <Button on:click={()=> $showDialog = true}>
+            <PlusIcon class="w-4 h-4 md:hidden" />
+            <p class="hidden md:block">Add Task</p>
+        </Button>
     </DialogTrigger>
     <DialogContent>
         <DialogHeader>

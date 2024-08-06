@@ -16,16 +16,8 @@
                 </div>
 
             </div>
-            <div class="flex items-center">
+            <div class="flex items-center gap-2">
                 <AddTask />
-                <div class="sm:hidden">
-                    <Button class="mr-2">
-                        <span class="material-icons">
-                            <PlusIcon class="w-4 h-4 md:hidden" />
-                            <p class="hidden md:block">Add Task</p>
-                        </span> <!-- Assuming you have a way to include icons -->
-                    </Button>
-                </div>
                 <DropdownMenu.Root>
                     <DropdownMenu.Trigger>
                         <Avatar.Root>

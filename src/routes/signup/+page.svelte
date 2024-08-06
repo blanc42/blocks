@@ -5,6 +5,7 @@
     import { enhance } from "$app/forms";
 
     import type { SubmitFunction } from '@sveltejs/kit';
+    import { goto } from "$app/navigation";
     
     let username = "test";
     let email = "test@test.com";
@@ -17,8 +18,8 @@
     const handleSubmit: SubmitFunction = () => {
         return async ({ update, result }) => {
             await update();
-            if (result.status === 200) {
-                console.log(result);
+            if (result.status === 200 || result.status === 201) {
+                goto("/");
             }
         };
     };
