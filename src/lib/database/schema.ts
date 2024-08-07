@@ -13,15 +13,28 @@ export const users = pgTable('users', {
   deletedAtIdx: index('users_deleted_at_idx').on(table.deletedAt)
 }));
 
-// Friendships table (for user connections)
+// Friendships table (for accepted friendships)
 export const friendships = pgTable('friendships', {
-  userId: integer('user_id').references(() => users.id),
-  friendId: integer('friend_id').references(() => users.id),
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  friendId: integer('friend_id').references(() => users.id).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull()
 }, (t) => ({
-  pk: primaryKey(t.userId, t.friendId),
   userIdIdx: index('friendships_user_id_idx').on(t.userId),
   friendIdIdx: index('friendships_friend_id_idx').on(t.friendId)
+}));
+
+// Friend requests table
+export const friendRequests = pgTable('friend_requests', {
+  id: serial('id').primaryKey(),
+  senderId: integer('sender_id').references(() => users.id).notNull(),
+  receiverId: integer('receiver_id').references(() => users.id).notNull(),
+  status: text('status').notNull().default('pending'), // 'pending', 'accepted', 'rejected'
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull()
+}, (t) => ({
+  senderIdIdx: index('friend_requests_sender_id_idx').on(t.senderId),
+  receiverIdIdx: index('friend_requests_receiver_id_idx').on(t.receiverId)
 }));
 
 // Tasks table
@@ -65,3 +78,42 @@ export type InsertFriendship = InferInsertModel<typeof friendships>;
 export type SelectFriendship = InferSelectModel<typeof friendships>;
 export type InsertTask = InferInsertModel<typeof tasks>;
 export type SelectTask = InferSelectModel<typeof tasks>;
+export type InsertFriendRequest = InferInsertModel<typeof friendRequests>;
+export type SelectFriendRequest = InferSelectModel<typeof friendRequests>;
+
+
+
+export type UserTask = {
+  id: SelectTask['id'];
+  title: SelectTask['title'];
+  description: SelectTask['description'];
+  chronos: SelectTask['chronos'];
+  deadline: SelectTask['deadline'];
+  isCompleted: SelectTask['isCompleted'];
+  partnerUsername: SelectUser['username'] | null;
+};
+
+export type KtaTask = {
+  id: SelectTask['id'];
+  title: SelectTask['title'];
+  description: SelectTask['description'];
+  chronos: SelectTask['chronos'];
+  deadline: SelectTask['deadline'];
+  isCompleted: SelectTask['isCompleted'];
+  creatorUsername: SelectUser['username'] | null;
+};
+
+export type FriendRequest = {
+  id: SelectFriendRequest['id'];
+  senderId: SelectFriendRequest['senderId'];
+  status: SelectFriendRequest['status'];
+  createdAt: SelectFriendRequest['createdAt'];
+  senderUsername: SelectUser['username'] | null;
+};
+
+export type Friend = {
+  id: number;
+  friendId: number;
+  createdAt: Date;
+  friendUsername: string | null;
+};

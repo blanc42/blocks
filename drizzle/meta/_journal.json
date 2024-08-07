@@ -8,6 +8,13 @@
       "when": 1722928438984,
       "tag": "0000_stormy_leper_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1722998835373,
+      "tag": "0001_green_excalibur",
+      "breakpoints": true
     }
   ]
 }

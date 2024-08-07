@@ -1,17 +1,19 @@
 <script lang="ts">
-  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$lib/components/ui/table";
+    import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "$lib/components/ui/table";
     import { Tabs, TabsContent, TabsList, TabsTrigger } from "$lib/components/ui/tabs";
     import { Checkbox } from "$lib/components/ui/checkbox";
-    import type { PageData } from './$types';
     import { enhance } from '$app/forms';
-    import type { SelectTask } from '$lib/database/schema';
     import type { SubmitFunction } from "@sveltejs/kit";
-    import { tasks, ktaTasks } from '$lib/stores/Store';
+    import { tasks, ktaTasks, requests, friends } from '$lib/stores/Store';
+    import type { PageData } from "../$types";
+
     export let data: PageData;
 
 
     $tasks = data.tasks;
     $ktaTasks = data.ktaTasks;
+    $requests = data.requests;
+    $friends = data.friends;
    
 
     const completeTask: SubmitFunction = () => {
@@ -53,7 +55,7 @@
                             <TableCell>{task.title}</TableCell>
                             <TableCell>{new Date(task.deadline).toLocaleString()}</TableCell>
                             <TableCell>
-                                <form method="POST" action="?/completeTask" use:enhance={completeTask}>
+                                <form method="POST" action="/?/completeTask" use:enhance={completeTask}>
                                     <input type="hidden" name="taskId" value={task.id}>
                                     <Checkbox name="completed" />
                                 </form>
@@ -78,7 +80,7 @@
                             <TableCell>{task.title}</TableCell>
                             <TableCell>{new Date(task.deadline).toLocaleString()}</TableCell>
                             <TableCell>
-                                <form method="POST" action="?/completeTask" use:enhance={completeTask}>
+                                <form method="POST" action="/?/completeTask" use:enhance={completeTask}>
                                     <input type="hidden" name="taskId" value={task.id}>
                                     <Checkbox name="completed" />
                                 </form>

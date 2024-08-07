@@ -1,20 +1,70 @@
 import { db } from '$lib/database';
-import { tasks } from '$lib/database/schema';
-import { eq, and, lt, gt } from 'drizzle-orm';
+import { tasks, friendRequests,friendships, users } from '$lib/database/schema';
+import { and, eq } from 'drizzle-orm';
 import type { Actions, ServerLoad } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 
-export const load: ServerLoad = async ({ locals }: { locals: { user?: { id: number } } }) => {
+export const load: ServerLoad = async ({ locals, setHeaders }) => {
     if (!locals.user) {
-        return { tasks: [], ktaTasks: [] };
+        return { tasks: [], ktaTasks: [], requests: [], friends: [] };
     }
 
-    const userTasks = await db.select().from(tasks).where(eq(tasks.userId, locals.user.id));
-    const ktaTasks = await db.select().from(tasks).where(eq(tasks.accountabilityPartnerId, locals.user.id));
 
-    return {
-        tasks: userTasks,
-        ktaTasks: ktaTasks
-    };
+    try {
+        const [userTasks, ktaTasks, requests, friends] = await Promise.all([
+            db.select({
+                id: tasks.id,
+                title: tasks.title,
+                description: tasks.description,
+                chronos: tasks.chronos,
+                deadline: tasks.deadline,
+                isCompleted: tasks.isCompleted,
+                partnerUsername: users.username
+            })
+            .from(tasks)
+            .leftJoin(users, eq(tasks.accountabilityPartnerId, users.id))
+            .where(eq(tasks.userId, locals.user.id)),
+
+            db.select({
+                id: tasks.id,
+                title: tasks.title,
+                description: tasks.description,
+                chronos: tasks.chronos,
+                deadline: tasks.deadline,
+                isCompleted: tasks.isCompleted,
+                creatorUsername: users.username
+            })
+            .from(tasks)
+            .leftJoin(users, eq(tasks.userId, users.id))
+            .where(eq(tasks.accountabilityPartnerId, locals.user.id)),
+
+            db.select({
+                id: friendRequests.id,
+                senderId: friendRequests.senderId,
+                status: friendRequests.status,
+                createdAt: friendRequests.createdAt,
+                senderUsername: users.username
+            })
+            .from(friendRequests)
+            .leftJoin(users, eq(friendRequests.senderId, users.id))
+            .where(eq(friendRequests.receiverId, locals.user.id)),
+
+            db.select({
+                id: friendships.id,
+                friendId: friendships.friendId,
+                createdAt: friendships.createdAt,
+                friendUsername: users.username
+            })
+            .from(friendships)
+            .leftJoin(users, eq(friendships.friendId, users.id))
+            .where(eq(friendships.userId, locals.user.id))
+        ]);
+
+        return { tasks: userTasks, ktaTasks, requests, friends };
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        throw error(500, 'Error fetching data');
+    }
 };
 
 export const actions: Actions = {

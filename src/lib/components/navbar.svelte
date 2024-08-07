@@ -43,6 +43,9 @@
                             <DropdownMenu.Item on:click={() => goto("/profile")}>
                                 Profile
                             </DropdownMenu.Item>
+                            <DropdownMenu.Item on:click={() => goto("/friends")}>
+                                Friends
+                            </DropdownMenu.Item>
                             <DropdownMenu.Item on:click={() => goto("/login")}>
                                 Login
                             </DropdownMenu.Item>

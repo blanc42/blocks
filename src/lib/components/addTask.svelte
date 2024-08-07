@@ -4,24 +4,27 @@
     import { Label } from "$lib/components/ui/label";
     import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "$lib/components/ui/dialog";
     import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "$lib/components/ui/drawer";
+    import * as Select from "$lib/components/ui/select";
     import { enhance } from '$app/forms';
     import type { SubmitFunction } from "@sveltejs/kit";
-    import { showDialog, showDrawer, tasks } from "$lib/stores/Store";
-    import { PlusIcon, PlusSquare } from "lucide-svelte";
-
+    import { showDialog, showDrawer, tasks, friends } from "$lib/stores/Store";
+    import { PlusIcon } from "lucide-svelte";
+    import type { InsertTask } from "$lib/database/schema";
 
     let newTask = {
         title: '',
         description: '',
         chronos: 0,
-        deadline: '',
-        accountabilityPartnerId: ''
+        deadline: new Date(),
+        accountabilityPartnerId: undefined
     };
 
     let isMobile: boolean;
 
     const addTask: SubmitFunction = () => {
         return async ({ update, result }) => {
+            console.log(newTask);
+
             await update();
             if (result.type === 'success') {
                 const newTaskData = result.data?.task;
@@ -34,16 +37,22 @@
         };
     }
 
-function checkMobile() {
-    isMobile = window.innerWidth <= 768;
-}
+    function checkMobile() {
+        isMobile = window.innerWidth <= 768;
+    }
 
-$: if (typeof window !== 'undefined') {
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-}
+    $: if (typeof window !== 'undefined') {
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+    }
+
+    $: SelectedAccountabilityPartner = newTask.accountabilityPartnerId 
+    ? {
+        label: $friends.find(f => f.friendId.toString() === newTask.accountabilityPartnerId)?.friendUsername,
+        value: newTask.accountabilityPartnerId
+    } : undefined;
+    
 </script>
-
 
 {#if isMobile}
 <Drawer open={$showDrawer} onOpenChange={(open) => $showDrawer = open}>
@@ -55,13 +64,12 @@ $: if (typeof window !== 'undefined') {
     </DrawerTrigger>
     <DrawerContent>
         <DrawerHeader>
-            <DrawerTitle>
-                Add Task
-            </DrawerTitle>
+            <DrawerTitle>Add Task</DrawerTitle>
             <DrawerDescription>Create a new task here</DrawerDescription>
         </DrawerHeader>
         <div class="p-4">
             <form method="POST" action="/?/addTask" use:enhance={addTask} class="space-y-4">
+
                 <div class="space-y-2">
                     <Label for="title">Title</Label>
                     <Input id="title" name="title" bind:value={newTask.title} required />
@@ -79,8 +87,18 @@ $: if (typeof window !== 'undefined') {
                     <Input id="deadline" name="deadline" type="datetime-local" bind:value={newTask.deadline} required />
                 </div>
                 <div class="space-y-2">
-                    <Label for="accountabilityPartnerId">Partner ID</Label>
-                    <Input id="accountabilityPartnerId" name="accountabilityPartnerId" bind:value={newTask.accountabilityPartnerId} required />
+                    <Select.Root name="accountabilityPartnerId" selected={undefined} onSelectedChange={(v) => {
+                        newTask.accountabilityPartnerId = v?.value as unknown;
+                    }}>
+                        <Select.Trigger>
+                            <Select.Value placeholder="Select a friend" />
+                        </Select.Trigger>
+                        <Select.Content>
+                            {#each $friends as friend}
+                                <Select.Item value={friend.friendId.toString()}>{friend.friendUsername}</Select.Item>
+                            {/each}
+                        </Select.Content>
+                    </Select.Root>
                 </div>
                 <Button type="submit">Add Task</Button>
             </form>
@@ -89,6 +107,11 @@ $: if (typeof window !== 'undefined') {
 </Drawer>
 {:else}
 <Dialog open={$showDialog} onOpenChange={(open) => $showDialog = open}>
+
+
+
+
+
     <DialogTrigger asChild>
         <Button on:click={()=> $showDialog = true}>
             <PlusIcon class="w-4 h-4 md:hidden" />
@@ -96,6 +119,26 @@ $: if (typeof window !== 'undefined') {
         </Button>
     </DialogTrigger>
     <DialogContent>
+
+
+        <!-- <Select.Root
+        selected={undefined}
+        onSelectedChange={(v) => {
+          v && (newTask.accountabilityPartnerId = v.value.toString());
+        }}
+      >
+        <Select.Trigger>
+          <Select.Value placeholder="Select a friend" />
+        </Select.Trigger>
+        <Select.Content>
+          <Select.Item value="m@example.com" label="m@example.com" />
+          <Select.Item value="m@google.com" label="m@google.com" />
+          <Select.Item value="m@support.com" label="m@support.com" />
+        </Select.Content>
+      </Select.Root> -->
+
+
+
         <DialogHeader>
             <DialogTitle>Add Task</DialogTitle>
             <DialogDescription>Create a new task here</DialogDescription>
@@ -118,8 +161,18 @@ $: if (typeof window !== 'undefined') {
                 <Input id="deadline" name="deadline" type="datetime-local" bind:value={newTask.deadline} required />
             </div>
             <div class="space-y-2">
-                <Label for="accountabilityPartnerId">Partner ID</Label>
-                <Input id="accountabilityPartnerId" name="accountabilityPartnerId" bind:value={newTask.accountabilityPartnerId} required />
+                <Select.Root name="accountabilityPartnerId" selected={SelectedAccountabilityPartner} onSelectedChange={(v) => {
+                    newTask.accountabilityPartnerId = v ? v.value : undefined;
+                }}>
+                    <Select.Trigger>
+                        <Select.Value placeholder="Select a friend" />
+                    </Select.Trigger>
+                    <Select.Content>
+                        {#each $friends as friend}
+                            <Select.Item value={friend.friendId.toString()}>{friend.friendUsername}</Select.Item>
+                        {/each}
+                    </Select.Content>
+                </Select.Root>
             </div>
             <Button type="submit">Add Task</Button>
         </form>
