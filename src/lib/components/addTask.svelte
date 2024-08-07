@@ -45,12 +45,6 @@
         checkMobile();
         window.addEventListener('resize', checkMobile);
     }
-
-    $: SelectedAccountabilityPartner = newTask.accountabilityPartnerId 
-    ? {
-        label: $friends.find(f => f.friendId.toString() === newTask.accountabilityPartnerId)?.friendUsername,
-        value: newTask.accountabilityPartnerId
-    } : undefined;
     
 </script>
 
@@ -87,18 +81,18 @@
                     <Input id="deadline" name="deadline" type="datetime-local" bind:value={newTask.deadline} required />
                 </div>
                 <div class="space-y-2">
-                    <Select.Root name="accountabilityPartnerId" selected={undefined} onSelectedChange={(v) => {
-                        newTask.accountabilityPartnerId = v?.value as unknown;
-                    }}>
-                        <Select.Trigger>
-                            <Select.Value placeholder="Select a friend" />
-                        </Select.Trigger>
-                        <Select.Content>
-                            {#each $friends as friend}
-                                <Select.Item value={friend.friendId.toString()}>{friend.friendUsername}</Select.Item>
-                            {/each}
-                        </Select.Content>
-                    </Select.Root>
+                    <Label for="accountabilityPartnerId">Accountability Partner</Label>
+                    <select
+                        id="accountabilityPartnerId"
+                        name="accountabilityPartnerId"
+                        bind:value={newTask.accountabilityPartnerId}
+                        class="w-full p-2 border rounded"
+                    >
+                        <option value="">Select a friend</option>
+                        {#each $friends as friend}
+                            <option value={friend.friendId.toString()}>{friend.friendUsername}</option>
+                        {/each}
+                    </select>
                 </div>
                 <Button type="submit">Add Task</Button>
             </form>
@@ -161,18 +155,18 @@
                 <Input id="deadline" name="deadline" type="datetime-local" bind:value={newTask.deadline} required />
             </div>
             <div class="space-y-2">
-                <Select.Root name="accountabilityPartnerId" selected={SelectedAccountabilityPartner} onSelectedChange={(v) => {
-                    newTask.accountabilityPartnerId = v ? v.value : undefined;
-                }}>
-                    <Select.Trigger>
-                        <Select.Value placeholder="Select a friend" />
-                    </Select.Trigger>
-                    <Select.Content>
-                        {#each $friends as friend}
-                            <Select.Item value={friend.friendId.toString()}>{friend.friendUsername}</Select.Item>
-                        {/each}
-                    </Select.Content>
-                </Select.Root>
+                <Label for="accountabilityPartnerId">Accountability Partner</Label>
+                <select
+                    id="accountabilityPartnerId"
+                    name="accountabilityPartnerId"
+                    bind:value={newTask.accountabilityPartnerId}
+                    class="w-full p-2 border rounded"
+                >
+                    <option value="">Select a friend</option>
+                    {#each $friends as friend}
+                        <option value={friend.friendId.toString()}>{friend.friendUsername}</option>
+                    {/each}
+                </select>
             </div>
             <Button type="submit">Add Task</Button>
         </form>
